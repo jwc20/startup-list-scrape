@@ -6,7 +6,7 @@ import csv
 
 class Scraper:
     def __init__(self, path) -> None:
-        self.data = path
+        self.url = path
 
     @staticmethod
     def _load_page(url):
@@ -51,15 +51,22 @@ class Scraper:
         return results
 
     def get_startups(self):
-        page = self._load_page(self.data)
+        page = self._load_page(self.url)
         data = self._scrape_startups(page)
         # print(data)
         return data
 
-    def export_data_to_csv():
-        pass
+    def export_data_to_csv(self):
+        with open("results.csv", "w+", newline="") as f:
+            writer = csv.writer(f)
+            results = self.get_startups()
+            # print(results)
+            for name, crunchbase_url, website_url, linked_url, description in results:
+                writer.writerow([name, crunchbase_url, website_url, linked_url, description])
+
 
 
 if __name__ == "__main__":
     url = "https://startupill.com/101-best-california-business-intelligence-startups-innovating-data-led-decisions/"
-    Scraper(url).get_startups()
+    # Scraper(url).get_startups()
+    Scraper(url).export_data_to_csv()
