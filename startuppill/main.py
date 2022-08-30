@@ -5,11 +5,12 @@ import csv
 
 
 class Scraper:
-    def __init__(self, path) -> None:
+    def __init__(self, path, headers) -> None:
         self.url = path
+        self.headers = headers
 
     @staticmethod
-    def _load_page(url):
+    def _load_page(url: str) -> BeautifulSoup:
         PAYLOAD = {"Content-Type": "text/html; charset=UTF-8"}
         target_url = url
         r = requests.get(target_url, headers=PAYLOAD)
@@ -18,7 +19,7 @@ class Scraper:
         return BeautifulSoup(html, "lxml")
 
     @staticmethod
-    def _scrape_startups(soup_data):
+    def _scrape_startups(soup_data) -> set:
         StartUp = namedtuple("StartUp", ["name", "crunchbase_url", "website_url", "linked_url", "description"])
         results = set()
 
@@ -50,15 +51,16 @@ class Scraper:
 
         return results
 
-    def get_startups(self):
+    def get_startups(self) -> set:
         page = self._load_page(self.url)
         data = self._scrape_startups(page)
-        # print(data)
+        # print(len(data))
         return data
 
-    def export_data_to_csv(self):
+    def export_data_to_csv(self) -> None:
         with open("results.csv", "w+", newline="") as f:
             writer = csv.writer(f)
+            writer.writerow(self.headers)
             results = self.get_startups()
             # print(results)
             for name, crunchbase_url, website_url, linked_url, description in results:
@@ -68,5 +70,6 @@ class Scraper:
 
 if __name__ == "__main__":
     url = "https://startupill.com/101-best-california-business-intelligence-startups-innovating-data-led-decisions/"
+    headers = ["name", "crunchbase", "website", "linkedin", "description"]
     # Scraper(url).get_startups()
-    Scraper(url).export_data_to_csv()
+    Scraper(url, headers).export_data_to_csv()
