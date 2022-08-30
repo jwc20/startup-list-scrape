@@ -19,34 +19,46 @@ class Scraper:
 
     @staticmethod
     def _scrape_startups(soup_data):
-        StartUp = namedtuple("StartUp", ["name", "crunchbase_url", "description"])
+        StartUp = namedtuple("StartUp", ["name", "crunchbase_url", "website_url", "linked_url", "description"])
+        results = set()
 
-        div_entry_content = soup_data.find("div", {"class": "entry-content g1-typography-xl"})
-        div_startup_cards = div_entry_content.find_all("div", {"class": "wp-block-cover alignwide has-black-background-color has-background-dim is-position-center-center"})
+        div_entry_content = soup_data.find(
+            "div", {"class": "entry-content g1-typography-xl"}
+        )
+        div_startup_cards = div_entry_content.find_all(
+            "div",
+            {
+                "class": "wp-block-cover alignwide has-black-background-color has-background-dim is-position-center-center"
+            },
+        )
 
         for card in div_startup_cards:
             startup_name = card.find("h3").text
-            # print(startup_name)
             startup_crunchbase_url = card.a["href"]
-            # startup_url = card.a.find_next_sibling("a")["href"]
             startup_url = card.find_all("a")[1]["href"]
             startup_linkedin_url = card.find_all("a")[4]["href"]
-            print(startup_crunchbase_url, startup_url, startup_linkedin_url)
             startup_description = card.find_all("p")[1].text
-            # print(startup_description)
+            results.add(
+                StartUp(
+                    startup_name,
+                    startup_crunchbase_url,
+                    startup_url,
+                    startup_linkedin_url,
+                    startup_description,
+                )
+            )
 
-        return div_startup_cards
-
-
+        return results
 
     def get_startups(self):
         page = self._load_page(self.data)
         data = self._scrape_startups(page)
         # print(data)
-
+        return data
 
     def export_data_to_csv():
         pass
+
 
 if __name__ == "__main__":
     url = "https://startupill.com/101-best-california-business-intelligence-startups-innovating-data-led-decisions/"
