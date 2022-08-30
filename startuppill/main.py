@@ -20,7 +20,10 @@ class Scraper:
 
     @staticmethod
     def _scrape_startups(soup_data) -> set:
-        StartUp = namedtuple("StartUp", ["name", "crunchbase_url", "website_url", "linked_url", "description"])
+        StartUp = namedtuple(
+            "StartUp",
+            ["name", "crunchbase_url", "website_url", "linked_url", "description"],
+        )
         results = set()
 
         div_entry_content = soup_data.find(
@@ -64,8 +67,9 @@ class Scraper:
             results = self.get_startups()
             # print(results)
             for name, crunchbase_url, website_url, linked_url, description in results:
-                writer.writerow([name, crunchbase_url, website_url, linked_url, description])
-
+                writer.writerow(
+                    [name, crunchbase_url, website_url, linked_url, description]
+                )
 
 
 if __name__ == "__main__":
