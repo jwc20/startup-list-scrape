@@ -28,7 +28,12 @@ class Scraper:
             startup_name = card.find("h3").text
             # print(startup_name)
             startup_crunchbase_url = card.a["href"]
-            print(startup_crunchbase_url)
+            # startup_url = card.a.find_next_sibling("a")["href"]
+            startup_url = card.find_all("a")[1]["href"]
+            startup_linkedin_url = card.find_all("a")[4]["href"]
+            print(startup_crunchbase_url, startup_url, startup_linkedin_url)
+            startup_description = card.find_all("p")[1].text
+            # print(startup_description)
 
         return div_startup_cards
 
