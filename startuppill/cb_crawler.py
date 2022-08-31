@@ -9,45 +9,47 @@ class CBCrawler:
         self.data = path
         self.headers = headers
 
-    @staticmethod
-    def _parse_csv(data):
-        cb_set = set()
-        CrunchBase = namedtuple(
-            "CrunchBase", ["name", "link", "ranking", "total_funding"]
-        )
-        with open(data, "r") as file:
-            # cb_data = [line.split(",")[1] for line in file][1:]
-            cb_data = [line for line in file][1:]
-            # print(
-            #     [(cb_item.split(",")[0], cb_item.split(",")[1]) for cb_item in cb_data]
-            # )
-            # cb_links.append(start_urls)
-            for cb_item in cb_data:
-                cb_set.add(CrunchBase(cb_item.split(",")[0], cb_item.split(",")[1]))
+    # @staticmethod
+    # def _parse_csv(data):
+    #     pass
 
-        return cb_set
 
     @staticmethod
-    def _load_page(links):
+    def _load_page(link):
         PAYLOAD = {"Content-Type": "text/html; charset=UTF-8"}
-
-        for item in data:
-            cb_url = item
-            print(cb_url)
-
-        target_url = url
+        target_url = link
         r = requests.get(target_url, headers=PAYLOAD)
         html = r.text
         return BeautifulSoup(html, "lxml")
 
     @staticmethod
-    def _scrape_page():
+    def _scrape_ranking(soup_data):
+        pass
+
+    @staticmethod
+    def _scrape_total_funding(soup_data):
         pass
 
     def get_rank(self):
-        csv_data = self._parse_csv(self.data)
-        page = self._load_page(csv_data)
-        cb_data = self._scrape_page(page)
+        # csv_data = self._parse_csv(self.data)
+        # page = self._load_page(csv_data)
+        # cb_data = self._scrape_page(page)
+
+        cb_set = set()
+        CrunchBase = namedtuple(
+            "CrunchBase", ["name", "link", "ranking", "total_funding"]
+        )
+        with open(self.data, "r") as file:
+            cb_data = [line for line in file][1:]
+            for cb_item in cb_data:
+                cb_name = cb_item.split(",")[0]
+                cb_url = cb_item.split(",")[1]
+                print(self._load_page(cb_url))
+                cb_ranking = self._scrape_ranking(self._load_page(cb_url))
+                cb_total_funding = self._scrape_total_funding(self._load_page(url))
+                # cb_set.add(CrunchBase())
+
+        return cb_set
 
     def export_to_csv(self):
         pass
