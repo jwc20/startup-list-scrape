@@ -9,18 +9,23 @@ class CBCrawler:
         self.data = path
         self.headers = headers
 
-    @staticmethod 
+    @staticmethod
     def _parse_csv(data):
-        cb_links = []
+        cb_set = set()
+        CrunchBase = namedtuple(
+            "CrunchBase", ["name", "link", "ranking", "total_funding"]
+        )
         with open(data, "r") as file:
-            start_urls = [line.split(",")[1] for line in file][1:]
-            print(start_urls)
-            print(len(start_urls))
-            cb_links.append(start_urls)
-            
-        return cb_links
+            # cb_data = [line.split(",")[1] for line in file][1:]
+            cb_data = [line for line in file][1:]
+            # print(
+            #     [(cb_item.split(",")[0], cb_item.split(",")[1]) for cb_item in cb_data]
+            # )
+            # cb_links.append(start_urls)
+            for cb_item in cb_data:
+                cb_set.add(CrunchBase(cb_item.split(",")[0], cb_item.split(",")[1]))
 
-
+        return cb_set
 
     @staticmethod
     def _load_page(links):
@@ -34,9 +39,6 @@ class CBCrawler:
         r = requests.get(target_url, headers=PAYLOAD)
         html = r.text
         return BeautifulSoup(html, "lxml")
-
-
-
 
     @staticmethod
     def _scrape_page():
